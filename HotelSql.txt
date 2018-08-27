@@ -1,0 +1,127 @@
+#预定表
+DROP TABLE IF EXISTS reserve;
+CREATE TABLE reserve(id INT(10) PRIMARY KEY,
+name VARCHAR(20),phone VARCHAR(11),roomtype VARCHAR(20),arraytime DATE,leavetime DATE,status VARCHAR(10));
+#id 日期+两位随机数
+#name 预定人员的姓名
+#phone 预订人的手机号
+#roomtype 预定房间的类型（大床，双人，豪华大床，豪华双人...）
+#arraytime 到店时间
+#leavetime 离店时间
+#status 预约状态（未入住/已入住）
+############################
+#房间信息表
+DROP TABLE IF EXISTS room;
+CREATE TABLE room(roomnum INT(10) PRIMARY KEY,
+roomtype VARCHAR(20),price INT(10),status VARCHAR(10));
+#roomnum 也就是房间号 101 102之类的
+#roomtype 房间类型
+#price 价格
+#status 房间状态（已预订？已入住？空闲？）
+#############################
+#顾客订单表
+DROP TABLE IF EXISTS guest;
+CREATE TABLE guest(id INT(10) PRIMARY KEY,
+name VARCHAR(20),idnum VARCHAR(20),roomnum INT(10),phone VARCHAR(11),arraytime Datetime,leavetime Datetime,receivable INT(5),deposit INT(5),status VARCHAR(5),remark VARCHAR(100));
+#id 相当于订单号，根据日期+累加数字生成（2018081201,2018081202.....）
+#name 入住人姓名
+#idnum 入住人身份证
+#roomnum 入住房间号
+#phone 入住人手机号
+#arraytime 入住时间（入住时自动生成 精确到分钟）
+#leavetime 退房时间（退房时自动生成 精确的分钟）
+#receivable 应收金额
+#deposit 押金
+#status 订单状态（已入住，已完成）两个状态（入住时隐藏表单value=已入住，退房时也是隐藏表单自动修改）
+#remark 备注
+#########################
+#员工信息表
+DROP TABLE IF EXISTS staff;
+CREATE TABLE staff(id INT auto_increment PRIMARY KEY,
+name VARCHAR(20),idnum VARCHAR(20),department VARCHAR(20),post VARCHAR(20),salary INT(10),remark VARCHAR(100));
+#name 员工姓名
+#idnum 员工身份证
+#department 所属部门
+#post 职位
+#salary 工资
+#remark 备注
+######################
+#收入表
+DROP TABLE IF EXISTS income;
+CREATE TABLE income(id VARCHAR(12) PRIMARY KEY,
+incomename VARCHAR(20),detail VARCHAR(50),money INT(10),operator VARCHAR(20),remark VARCHAR(100));
+#id 时间+1代表收入/2代表支出+3个数字长度的随机数/自动累加数
+#incomename 收入类别
+#detail 详情
+#money 收入金额
+#operator 操作人员
+#remark 备注
+#####################
+#支出表
+DROP TABLE IF EXISTS expend;
+CREATE TABLE expend(id VARCHAR(12) PRIMARY KEY,
+expendname VARCHAR(20),detail VARCHAR(50),money INT(10),operator VARCHAR(20),remark VARCHAR(100));
+#id 时间+1代表收入/2代表支出+3个数字长度的随机数/自动累加数
+#expendname 支出类别
+#detail 详情
+#money 支出金额
+#operator 操作人员
+#remark 备注
+#######################
+#维护表
+DROP TABLE IF EXISTS maintain;
+CREATE TABLE maintain(id VARCHAR(12) PRIMARY KEY,
+type VARCHAR(10),mname VARCHAR(20),number INT(5),status VARCHAR(10),remark VARCHAR(100));
+#id 时间+四个数字长度的随机数/自动累加数
+#type	维护物品的种类（设施/日用品/餐饮/）
+#mname 维护物品的名字（被单，毛巾需要清理，提供的日用品需要上新之类的）
+#number 数量
+#status 状态（未完成，已完成）
+#remark 备注
+#######################
+#客房服务表
+#可以在用户页面搞这个。。。。后台也有
+DROP TABLE IF EXISTS service;
+CREATE TABLE service(id VARCHAR(12) PRIMARY KEY,
+gid INT(10),name VARCHAR(20),roomnum INT(10),warehouse VARCHAR(50),food VARCHAR(50),clean VARCHAR(50),price INT(5),remark VARCHAR(100));
+#id 时间+四个数字长度的随机数/自动累加数
+#gid 入住表id（直接传入）
+#name 顾客名（直接传入）
+#roomnum 房间号（直接传入）
+#服务细节 分三类
+#warehouse
+#food
+#clean
+#price 总价
+#remark 备注
+######################
+#管理员表
+DROP TABLE IF EXISTS admin;
+CREATE TABLE admin(id INT auto_increment PRIMARY KEY,
+name VARCHAR(20),password VARCHAR(20),power INT(1));
+#id 自动生成
+#name 管理员名字
+#password 密码
+#power 权限
+#######################
+#仓储信息表   酒店还有多少存货 能不能供应需求，需不需要新入库
+DROP TABLE IF EXISTS storage;
+CREATE TABLE storage(id INT auto_increment PRIMARY KEY,
+name VARCHAR(20),number INT(5),detail VARCHAR(50),lasttime Datetime);
+#id 自动生成
+#name 产品名称
+#number 数量
+#detail 描述
+#lasttime 最后修改时间
+#######################
+#实现换房功能，在入住信息页面选择某条需要修改的信息，点击跳转到新页面输入新房间好进行换房操作
+#此时修改了入住表对应的房间号，以及房间表对应两个房间的状态
+
+#退房时自动进行会计核算，在收入表自动新建一条数据（退房时应该还要有从客房服务引入的数据）
+#加入服务细分功能（餐饮，仓库，清洁），服务表增加一列 类别 然后细化功能后根据类型去选择输出
+#会计核算 计算同一天/同一个星期/同一个月的收入&支出
+
+#加一个aop编程部分，在方法实现类去打印执行的时间？
+
+#入住时修改房间状态->已入住&有预约修改预约状态->已入住
+####################
